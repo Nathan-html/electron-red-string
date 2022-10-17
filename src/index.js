@@ -7,7 +7,10 @@ const path = require('path');
 function createWindow() {
     const win = new BrowserWindow({
         width: 1400,
-        height: 1200
+        height: 1200,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
     });
 
     // __dirname permet de renvoyer le chemin absolu du projet
@@ -15,16 +18,19 @@ function createWindow() {
     win.loadFile(path.join(__dirname, 'views', 'home', 'home.html'));
 }
 
-// On dit à l'application quand tu es prête, tu crées la fenêtre
-app.whenReady().then(() => {
-    createWindow()
-
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
+app.whenReady()
+    .then(() => {
+        createWindow()
+        // Stuff Mac
+        app.on('activate', () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                createWindow();
+            }
+        })
     })
-});
+    .catch((error) => {
+        console.log("Error in whenReady : ", error);
+    });
 
 // Stuff Windows & Linux
 app.on('window-all-closed', () => {
